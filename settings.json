@@ -1,0 +1,28 @@
+{
+  "environment" :{
+    "chrome_driver_path" : "",
+    "website" : "",
+    "thread_count": "1"
+  },
+  "account_info":
+  {
+    "phone_number" : "",
+    "email" : "",
+    "paid_method" : "",
+    "coupon" : "",
+    "invoice_type" : "",
+    "purchaser" : "",
+    "carrier_type" : "",
+    "barcode" : ""
+  },
+  "credit_card_info":
+  {
+    "card_type" : "",
+    "account" : "",
+    "year" : "",
+    "month" : "",
+    "cvn" : "",
+    "first_name" : "",
+    "last_name" : ""
+  }
+}

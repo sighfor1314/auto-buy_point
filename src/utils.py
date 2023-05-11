@@ -1,5 +1,4 @@
 import time
-from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,45 +6,32 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from os.path import dirname, join, abspath
-import configparser     # for using .ini file
 import platform
-# for clearInput()
-from selenium.webdriver.chrome.options import Options
-# for monitoring http request/response
+import sys
+import os
+import json
 
 class Actions:
-    def __init__(self,environment):
-
-        # options = webdriver.ChromeOptions()
-        # 1. enable to capture network logs
-        # options.add_experimental_option('perfLoggingPrefs', {'enableNetwork': True})
-        # caps = DesiredCapabilities.CHROME
-        # caps['goog:loggingPrefs'] = {'performance': 'ALL'}
-        # 啟用 Chrome browser
-
-        #設定chromedriver 路徑 此範例for mac
-        webdriver_chrome_path = '/usr/local/bin/chromedriver'
-        options = Options()
-        options.add_argument("--disable-notifications")
+    def __init__(self):
+        if str(sys.platform) == 'darwin':
+            webdriver_chrome_path = '/usr/local/bin/chromedriver'
+        elif str(sys.platform) == 'win32':
+            website = self.read_json_file()['website']
+            if not website:
+                webdriver_chrome_path = '.chromedriver'
+            else:
+                webdriver_chrome_path = website
         self.driver = webdriver.Chrome(webdriver_chrome_path)
-        # self.driver = webdriver.Chrome(options=options)
 
+    def read_json_file(self):
+        file_path = os.path.join(os.getcwd(), "settings.json")
 
-        # 開啟設定檔 account.ini
-        ini_file_name = "account.ini"
-        self.config = self.getConfig(ini_file_name)
+        with open(file_path) as file:
+            json_data = json.load(file)
+        return json_data
 
-        # 前往 Gash 網站
-        self.gotoURL(self.config['WEBSITES'][environment])
-
-
-    def getConfig(self, ini_file_name):
-        configuration = configparser.ConfigParser()
-        configuration.optionxform = str
-        configuration.read(ini_file_name)
-        return configuration
+    def set_chrome_driver(self):
+        pass
 
     def gotoURLDirect(self, URL):
         self.driver.get(URL)
@@ -70,7 +56,7 @@ class Actions:
         ActionChains(self.driver).move_to_element(WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, xpath)))).perform()
         ActionChains(self.driver).click().perform()
-        sleep(1)
+        time.sleep(1)
 
     #點選所有checkbox
     def clickCheckbox(self,name):
@@ -92,13 +78,13 @@ class Actions:
     # 雙點擊 Item
     def doubleClickItem(self, xpath):
         ActionChains(self.driver).double_click(self.driver.find_element_by_xpath(xpath)).perform()
-        sleep(1)
+        time.sleep(1)
 
     # 點擊按鈕
     def clickButton(self, xpath):
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, xpath))).click()
-        # sleep(1)
+        time.sleep(1)
 
     #設定重整頁面
     def refresh(self):
@@ -130,16 +116,16 @@ class Actions:
 
     #清除input
     def clearInput(self, xpath):
-        sleep(0.1)
+        time.sleep(0.1)
         # 取得 input 當前內容，若有 value 則清空
         while self.getAttribute(xpath, "value") != "":
             if (platform.system() == "Darwin"):  # mac
                 self.driver.find_element_by_xpath(xpath).send_keys(Keys.COMMAND, "a")
             else:
                 self.driver.find_element_by_xpath(xpath).send_keys(Keys.CONTROL, "a")
-            sleep(0.2)
+            time.sleep(0.2)
             self.driver.find_element_by_xpath(xpath).send_keys(Keys.BACK_SPACE)
-        sleep(1)
+        time.sleep(1)
 
     # 等待按鈕可以按
     def waitUntilButtonEnable(self, xpath):
@@ -177,8 +163,7 @@ class Actions:
         except:
             return False
 
-"""
- # 獲得當下視窗控制代碼
+    # 獲得當下視窗控制代碼
     def getWindowHandles(self, index):
         return self.driver.window_handles[index]
 
@@ -249,8 +234,6 @@ class Actions:
         element = self.driver.find_element_by_xpath(xpath)
         return element.get_attribute(class_name)
 
-"""
-"""      
     def getHttpRequests(self):
         '''
         :Usage:
@@ -298,4 +281,3 @@ class Actions:
                     #print("error")
         return responses_json
 
-"""

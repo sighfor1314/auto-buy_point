@@ -1,8 +1,8 @@
-from buy_gash import BuyGash
-from actions import Actions
-from payment import Payment
-from creditcard import CreditCard
-from setOTP import SetOTP
+from src.pages.buy_gash import BuyGash
+from src.utils import Actions
+from src.pages.payment import Payment
+from src.pages.creditcard import CreditCard
+from src.pages.setOTP import SetOTP
 def main():
    environment = "gash5400"
    driver = Actions(environment)
@@ -14,6 +14,6 @@ def main():
    gash.setCreditcard()
    gash = SetOTP(driver)
    gash.taishinBank()
-
+   print(driver.read_json_file())
 if __name__ == '__main__':
    main()
